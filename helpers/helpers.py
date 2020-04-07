@@ -2,8 +2,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
           
-def train_model(model, train_input, train_target,criterion=nn.CrossEntropyLoss(),optimizer=torch.optim.SGD(model.parameters(),lr=1e-1), mini_batch_size=50,,show=False):
-        
+def train_model(model, train_input,train_target,optimizer,criterion=nn.CrossEntropyLoss(),mini_batch_size=50,show=False):
+    if optimizer == None:
+        optimizer = torch.optim.SGD(model.parameters(),lr=1e-1)
     e = 25
     for e in range(nb_epochs):
         
