@@ -7,6 +7,7 @@ from module import *
 class Linear(Module):
     def __init__(self, in_size, out_size):
         
+        super(Linear, self).__init__()
         self.in_size = in_size
         self.out_size = out_size
         

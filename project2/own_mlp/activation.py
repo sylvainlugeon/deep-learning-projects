@@ -6,6 +6,7 @@ from module import *
 # Sigmoid activation 
 class Sigmoid(Module):
     def __init__(self):
+        super(Sigmoid, self).__init__()
         self.in_value = None
 
     def forward(self, *input):
@@ -24,6 +25,7 @@ class Sigmoid(Module):
 # ReLU activation
 class Relu(Module):
     def __init__(self):
+        super(Relu, self).__init__()
         self.in_value = None
 
     def forward(self, *input):

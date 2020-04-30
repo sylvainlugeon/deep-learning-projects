@@ -11,6 +11,7 @@ from activation import *
 # A sequence of modules
 class Sequential(Module):
     def __init__(self, *modules, loss, out_size):
+        super(Sequential, self).__init__()
         self.layers = modules
         self.loss = loss
         self.out_size = out_size
