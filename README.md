@@ -4,7 +4,7 @@ EE-559 - Deep Learning - EPFL - 2020
 _**Benkley** Tyler_, _**Berdoz** Frédéric_, _**Lugeon** Sylvain_
 
 ## Context
-The   goal   of   this   project   is   to   assess   the   impact   of network  architecture,  weight  sharing  techniques  and  the use  of  auxiliary  losses  in  a  classification  task.  To  do  so, we  compare  the  performance  of  4  architectures (```FCNet```, ```ConvNet```, ```ConvSepNet``` and ```FinalNet```)  subject  todifferent conditions.
+The   goal   of   this   project   is   to   assess   the   impact   of network  architecture,  weight  sharing  techniques  and  the use  of  auxiliary  losses  in  a  classification  task.  To  do  so, we  compare  the  performance  of  4  architectures (```FCNet```, ```ConvNet```, ```ConvSepNet``` and ```FinalNet```)  subject  to different conditions.
 
 
 ## Content
@@ -17,11 +17,13 @@ The   goal   of   this   project   is   to   assess   the   impact   of network 
 
 * ```ee559_miniprojects.pdf```: Project definition.
 
+* ```report.pdf```: The report of the project.
+
 * ```data``` folder: Contains the mnist data.
 
 * ```backup``` folder: Contains backup of variables used for the figures presented in the report.
 
-* ```figures``` folder: Figures presented in the report and others.
+* ```figures``` folder: Contains figures presented in the report (and others).
 
 
 ## Prerequisite
