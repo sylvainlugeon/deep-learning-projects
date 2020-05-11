@@ -24,29 +24,24 @@ class Sequential(Module):
     
     def train(self, inputs, targets, epochs, batch_size = 10, verbose=True):
         
-        eta = 1e-1 / batch_size # divide per number of samples or not ?
+        eta = 1e-1 / batch_size 
                 
         for e in range(epochs):
             
             sum_loss = 0
-            # iterate over each sample and update weights at each iteration
-            # todo : iterate over batches and update weights after each batch
+            # iterate over each batch and update weights
             for input_batch, target_batch in zip(inputs.split(batch_size), targets.split(batch_size)):
                 
-                for i in range(batch_size):
-                    input = input_batch[i]
-                    target = target_batch[i]
-                
-                    # computing predicted values and loss
-                    predicted = self.forward(input) 
-                    sum_loss = sum_loss + self.loss.forward(predicted, target) # LOG ???
+                # computing predicted values and loss
+                predicted = self.forward(input_batch) 
+                sum_loss = sum_loss + self.loss.forward(predicted, target_batch) # LOG ???
 
-                    # computing derivative of the loss between predicted and target
-                    x = self.loss.backward(predicted, target)
+                # computing derivative of the loss between predicted and target
+                x = self.loss.backward(predicted, target_batch)
 
-                    # backpropagate the loss through the net, adding the gradients in linear modules
-                    for m in reversed(self.layers):
-                        x = m.backward(x)
+                # backpropagate the loss through the net, adding the gradients in linear modules
+                for m in reversed(self.layers):
+                    x = m.backward(x)
             
                 # update weights in linear modules
                 for m in self.layers:
@@ -73,8 +68,4 @@ class Sequential(Module):
     # predictions using current weights in the modules
     # input : tensor, samples aligned along first dimension
     def predict(self, inputs):
-        nb_samples = inputs.shape[0]
-        pred = torch.empty(nb_samples, self.out_size)
-        for i in range(nb_samples):
-            pred[i] = self.forward(inputs[i])
-        return pred
+        return self.forward(inputs)

@@ -60,7 +60,7 @@ def test():
     test_inputs, test_targets, test_classes = generate_points(1000)
     
     # train model
-    model.train(train_inputs, train_targets, epochs=25, batch_size=2, verbose=True)
+    model.train(train_inputs, train_targets, epochs=25, batch_size=10, verbose=True)
     
     # compute accuracy
     train_acc = accuracy(model, train_inputs, train_classes)
