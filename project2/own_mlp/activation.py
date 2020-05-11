@@ -44,3 +44,22 @@ class Relu(Module):
         return self.derivative(self.in_value) * gradwrtoutput[0] # elementwise multiplication
     
     def to_string(self): return "ReLU"
+    
+# Tanh activation
+class Tanh(Module):
+    def __init__(self):
+        super(Tanh, self).__init__()
+        self.in_value = None
+    
+    def forward(self, *input):
+        x = ( input[0].exp() - (-input[0]).exp() ) / (input[0].exp() + (-input[0]).exp() )
+        self.in_value = x
+        return x
+    
+    def derivative(self, v):
+        return 1 - self.forward(v)*self.forward(v)
+    
+    def backward(self, *gradwrtoutput):
+        return self.derivative(self.in_value) * gradwrtoutput[0]
+    
+    def to_string(self): return "Tanh"
