@@ -11,8 +11,8 @@ class Activation(Cell):
         
     def derivative(self, v): raise NotImplementedError
         
-    def backward(self, *gradwrtoutput):
-        return self.derivative(self.in_value) * gradwrtoutput[0] # elementwise multiplication
+    def backward(self, gradwrtoutput):
+        return self.derivative(self.in_value) * gradwrtoutput # elementwise multiplication
     
 
 # Sigmoid activation 
@@ -20,8 +20,8 @@ class Sigmoid(Activation):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
-    def forward(self, *input):
-        x = 1 / (1 + (-input[0]).exp())
+    def forward(self, input):
+        x = 1 / (1 + (-input).exp())
         self.in_value = x
         return x
     
@@ -35,8 +35,8 @@ class Relu(Activation):
     def __init__(self):
         super(Relu, self).__init__()
 
-    def forward(self, *input):
-        x = input[0].clone()
+    def forward(self, input):
+        x = input.clone()
         x[x < 0] = 0
         self.in_value = x
         return x
@@ -54,8 +54,8 @@ class Tanh(Activation):
     def __init__(self):
         super(Tanh, self).__init__()
     
-    def forward(self, *input):
-        x = ( input[0].exp() - (-input[0]).exp() ) / (input[0].exp() + (-input[0]).exp() )
+    def forward(self, input):
+        x = ( input[0].exp() - (-input).exp() ) / (input.exp() + (-input).exp() )
         self.in_value = x
         return x
     

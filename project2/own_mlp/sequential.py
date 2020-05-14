@@ -16,13 +16,13 @@ class Sequential(Module):
         self.loss = loss
         self.out_size = out_size
         
-    def forward(self, *input):
-        x = input[0]
+    def forward(self, input):
+        x = input
         for m in self.layers: # not forwarding through the loss
             x = m.forward(x)
         return x
     
-    def train(self, inputs, targets, epochs, batch_size = 10, verbose=True):
+    def train(self, input, target, epochs, batch_size = 10, verbose=True):
         
         eta = 1e-1 / batch_size 
                 
@@ -30,7 +30,7 @@ class Sequential(Module):
             
             sum_loss = 0
             # iterate over each batch and update weights
-            for input_batch, target_batch in zip(inputs.split(batch_size), targets.split(batch_size)):
+            for input_batch, target_batch in zip(input.split(batch_size), target.split(batch_size)):
                 
                 # computing predicted values and loss
                 predicted = self.forward(input_batch) 
@@ -67,5 +67,5 @@ class Sequential(Module):
             
     # predictions using current weights in the modules
     # input : tensor, samples aligned along first dimension
-    def predict(self, inputs):
-        return self.forward(inputs)
+    def predict(self, input):
+        return self.forward(input)

@@ -20,22 +20,22 @@ class Linear(Cell):
         self.db = torch.empty(out_size).zero_()
         
     
-    def forward(self, *input):
-        self.in_value = input[0]
-        return self.w.mm(input[0].T).T + self.b
+    def forward(self, input):
+        self.in_value = input
+        return self.w.mm(input.T).T + self.b
     
-    def backward(self, *gradwrtoutput):
+    def backward(self, gradwrtoutput):
         
         # gradient for all the samples in the batch
-        dw_c = gradwrtoutput[0].T.mm(self.in_value)
-        db_c = torch.sum(gradwrtoutput[0].T, dim=1) # right to use sum ??
+        dw_c = gradwrtoutput.T.mm(self.in_value)
+        db_c = torch.sum(gradwrtoutput.T, dim=1) # right to use sum ??
         
         # updating gradients
         self.dw.add_(dw_c)
         self.db.add_(db_c)
         
         # gradient with respect to the input
-        d_input = gradwrtoutput[0].mm(self.w)
+        d_input = gradwrtoutput.mm(self.w)
         
         return d_input
     
