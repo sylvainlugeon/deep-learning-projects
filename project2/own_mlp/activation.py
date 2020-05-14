@@ -4,12 +4,16 @@ import math
 from module import *
 from cell import *
 
-# Mother class of all activation modules, defines the derivative method
+# Mother class of all activation m
 class Activation(Cell):
     def __init__(self):
         super(Activation, self).__init__()
         
     def derivative(self, v): raise NotImplementedError
+        
+    def backward(self, *gradwrtoutput):
+        return self.derivative(self.in_value) * gradwrtoutput[0] # elementwise multiplication
+    
 
 # Sigmoid activation 
 class Sigmoid(Activation):
@@ -23,9 +27,6 @@ class Sigmoid(Activation):
     
     def derivative(self, v):
         return self.forward(v) * self.forward(-v) # fancy form for derivative
-    
-    def backward(self, *gradwrtoutput):
-        return self.derivative(self.in_value) * gradwrtoutput[0] # elementwise multiplication
     
     def to_string(self): return "Sigmoid"
     
@@ -46,16 +47,12 @@ class Relu(Activation):
         vv[vv > 0] = 1
         return vv
     
-    def backward(self, *gradwrtoutput):
-        return self.derivative(self.in_value) * gradwrtoutput[0] # elementwise multiplication
-    
     def to_string(self): return "ReLU"
     
 # Tanh activation
-class Tanh(Module):
+class Tanh(Activation):
     def __init__(self):
         super(Tanh, self).__init__()
-        self.in_value = None
     
     def forward(self, *input):
         x = ( input[0].exp() - (-input[0]).exp() ) / (input[0].exp() + (-input[0]).exp() )
@@ -64,8 +61,5 @@ class Tanh(Module):
     
     def derivative(self, v):
         return 1 - self.forward(v)*self.forward(v)
-    
-    def backward(self, *gradwrtoutput):
-        return self.derivative(self.in_value) * gradwrtoutput[0]
     
     def to_string(self): return "Tanh"
