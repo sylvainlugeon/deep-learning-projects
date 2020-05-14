@@ -2,8 +2,9 @@ import torch
 import random
 import math
 from module import *
+from cell import *
 
-class Linear(Module):
+class Linear(Cell):
     def __init__(self, in_size, out_size):
         
         self.in_size = in_size
@@ -18,7 +19,6 @@ class Linear(Module):
         self.dw = torch.empty(out_size, in_size).zero_()
         self.db = torch.empty(out_size).zero_()
         
-        self.in_value = None
     
     def forward(self, *input):
         self.in_value = input[0]

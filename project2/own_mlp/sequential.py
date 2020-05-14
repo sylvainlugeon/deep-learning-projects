@@ -34,10 +34,10 @@ class Sequential(Module):
                 
                 # computing predicted values and loss
                 predicted = self.forward(input_batch) 
-                sum_loss = sum_loss + self.loss.forward(predicted, target_batch) # LOG ???
+                sum_loss = sum_loss + self.loss.loss(predicted, target_batch) # LOG ???
 
                 # computing derivative of the loss between predicted and target
-                x = self.loss.backward(predicted, target_batch)
+                x = self.loss.dloss(predicted, target_batch)
 
                 # backpropagate the loss through the net, adding the gradients in linear modules
                 for m in reversed(self.layers):
@@ -51,7 +51,7 @@ class Sequential(Module):
             if verbose:        
                 print("Epoch {} | Loss {:.2f}".format(e, sum_loss))
     
-    def print_param(self):
+    def param(self):
         for m in self.layers:
             if isinstance(m, Linear):
                 params = m.param()

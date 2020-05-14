@@ -11,6 +11,10 @@ from sequential import *
 # just to be sure
 torch.set_grad_enabled(False);
 
+# set seeds
+torch.manual_seed(42)
+random.seed(42)
+
 # generate 2d points in [0,1] squared, targets are 0 if point inside the circle of squared radius 1/2pi and 1 outside.
 # return coordinates and target tensors, both of size Nx2, plus classes tensor of size Nx1
 def generate_points(nb):

@@ -3,15 +3,26 @@ import random
 import math
 from module import *
 
+# Mother class of losses, defines methodes loss() and dloss()
+class Loss(Module):
+    def __init__(self):
+        super(Loss, self).__init__()
+        
+    def loss(self, input, target): raise NotImplementedError
+        
+    def dloss(self, input, target): raise NotImplementedError
+
 # MSE Loss
-class MSELoss(Module):
+class MSELoss(Loss):
+    def __init__(self):
+        super(MSELoss, self).__init__()
     
     # input: predicted, target
-    def forward(self, *input):
-        return (input[0] - input[1]).pow(2).sum() # dividing by nb of samples ? 
+    def loss(self, input, target):
+        return (input - target).pow(2).sum() # dividing by nb of samples ? 
     
     # gradwrtoutput : predicted, target
-    def backward(self, *gradwrtoutput):
-        return 2 * (gradwrtoutput[0] - gradwrtoutput[1]) # dividing by nb of sample ? 
+    def dloss(self, input, target):
+        return 2 * (input - target)
     
     def to_string(self): return "MSE Loss"
