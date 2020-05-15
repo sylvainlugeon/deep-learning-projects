@@ -51,8 +51,7 @@ def test():
         Linear(25, 25), 
         Relu(),
         Linear(25, 2),
-        loss=MSELoss(), 
-        out_size = 2)
+        loss=MSELoss())
     
     print("Model:")
     print("---------------------")

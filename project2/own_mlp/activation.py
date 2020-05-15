@@ -55,7 +55,7 @@ class Tanh(Activation):
         super(Tanh, self).__init__()
     
     def forward(self, input):
-        x = ( input[0].exp() - (-input).exp() ) / (input.exp() + (-input).exp() )
+        x = (1 - (-2*input).exp() ) / (1 + (-2*input).exp())
         self.in_value = x
         return x
     

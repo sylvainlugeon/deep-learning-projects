@@ -10,11 +10,10 @@ from activation import *
 
 # A sequence of modules
 class Sequential(Module):
-    def __init__(self, *modules, loss, out_size):
+    def __init__(self, *modules, loss):
         super(Sequential, self).__init__()
         self.layers = modules
         self.loss = loss
-        self.out_size = out_size
         
     def forward(self, input):
         x = input
