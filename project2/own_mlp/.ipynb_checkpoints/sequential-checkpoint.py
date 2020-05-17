@@ -9,54 +9,57 @@ from activation import *
 
 
 # A sequence of modules
-class Sequential(Module):
-    def __init__(self, *modules, loss, out_size):
+class Sequential(Updatable):
+    def __init__(self, *modules, loss=None):
         super(Sequential, self).__init__()
         self.layers = modules
         self.loss = loss
-        self.out_size = out_size
         
-    def forward(self, *input):
-        x = input[0]
+    def forward(self, input):
+        x = input
         for m in self.layers: # not forwarding through the loss
             x = m.forward(x)
         return x
     
-    def train(self, inputs, targets, epochs, batch_size = 10, verbose=True):
+    def backward(self, gradwrtoutput):
+        x = gradwrtoutput
+        for m in reversed(self.layers): # not backwarding through the loss
+            x = m.backward(x)
+        return x
+    
+    def update_param(self, step_size):
+        for m in self.layers:
+            if isinstance(m, Updatable):
+                m.update_param(step_size)
+    
+    
+    def train(self, input, target, epochs, batch_size = 10, verbose=True):
         
-        eta = 1e-1 / batch_size # divide per number of samples or not ?
+        eta = 1e-1 
                 
         for e in range(epochs):
             
             sum_loss = 0
-            # iterate over each sample and update weights at each iteration
-            # todo : iterate over batches and update weights after each batch
-            for input_batch, target_batch in zip(inputs.split(batch_size), targets.split(batch_size)):
+            # iterate over each batch and update weights
+            for input_batch, target_batch in zip(input.split(batch_size), target.split(batch_size)):
                 
-                for i in range(batch_size):
-                    input = input_batch[i]
-                    target = target_batch[i]
-                
-                    # computing predicted values and loss
-                    predicted = self.forward(input) 
-                    sum_loss = sum_loss + self.loss.forward(predicted, target) # LOG ???
+                # computing predicted values and loss
+                predicted = self.forward(input_batch) 
+                sum_loss = sum_loss + self.loss.loss(predicted, target_batch)
 
-                    # computing derivative of the loss between predicted and target
-                    x = self.loss.backward(predicted, target)
+                # computing derivative of the loss between predicted and target
+                x = self.loss.dloss(predicted, target_batch)
 
-                    # backpropagate the loss through the net, adding the gradients in linear modules
-                    for m in reversed(self.layers):
-                        x = m.backward(x)
+                # backpropagate the loss through the net, adding the gradients in linear modules
+                self.backward(x)
             
                 # update weights in linear modules
-                for m in self.layers:
-                    if isinstance(m, Linear):
-                        m.update_param(eta)
+                self.update_param(eta)
                         
             if verbose:        
                 print("Epoch {} | Loss {:.2f}".format(e, sum_loss))
     
-    def print_param(self):
+    def param(self):
         for m in self.layers:
             if isinstance(m, Linear):
                 params = m.param()
@@ -66,15 +69,17 @@ class Sequential(Module):
                 print()
             
     def describe(self):
+        print(self.to_string())
+        if self.loss is not None:
+            print(self.loss.to_string())
+        
+    def to_string(self):
+        s = ''
         for m in self.layers:
-            print(m.to_string())
-        print(self.loss.to_string())
+            s = s + m.to_string() + '\n'
+        return s
             
     # predictions using current weights in the modules
     # input : tensor, samples aligned along first dimension
-    def predict(self, inputs):
-        nb_samples = inputs.shape[0]
-        pred = torch.empty(nb_samples, self.out_size)
-        for i in range(nb_samples):
-            pred[i] = self.forward(inputs[i])
-        return pred
+    def predict(self, input):
+        return self.forward(input)
