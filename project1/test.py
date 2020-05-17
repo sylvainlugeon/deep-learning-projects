@@ -231,7 +231,7 @@ def train_routine(model, train_input, train_target, train_classes, test_input, t
     
     for e in range(EPOCHS):
         
-        print('\rTraining {}... (Epoch {}/{})'.format(model.__class__.__name__, e+1, EPOCHS), end=' ')
+        print('\rTraining {}... (Epoch {}/{})'.format(model.__class__.__name__, e+1, EPOCHS), end="")
         
         # Ponderation of the main loss => (1-f): ponderation of the auxiliray loss. 
         f = AUX_LOSS

@@ -19,7 +19,7 @@ The   goal   of   this   project   is   to   assess   the   impact   of network 
 
 * ```report.pdf```: The report of the project.
 
-* ```data``` folder: Contains the mnist data.
+* ```data``` folder: Contains the mnist data (or where it will be downoaded the first time).
 
 * ```backup``` folder: Contains backup of variables used for the figures presented in the report.
 
