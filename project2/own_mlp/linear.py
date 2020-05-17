@@ -3,8 +3,9 @@ import random
 import math
 from module import *
 from cell import *
+from updatable import *
 
-class Linear(Cell):
+class Linear(Cell, Updatable):
     def __init__(self, in_size, out_size):
         
         self.in_size = in_size

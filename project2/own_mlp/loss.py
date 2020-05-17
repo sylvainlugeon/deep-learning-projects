@@ -19,10 +19,10 @@ class MSELoss(Loss):
     
     # input: predicted, target
     def loss(self, input, target):
-        return (input - target).pow(2).sum() # dividing by nb of samples ? 
+        return (input - target).pow(2).sum() / input.shape[0]
     
     # gradwrtoutput : predicted, target
     def dloss(self, input, target):
-        return 2 * (input - target)
+        return 2 * (input - target) / input.shape[0]
     
     def to_string(self): return "MSE Loss"
