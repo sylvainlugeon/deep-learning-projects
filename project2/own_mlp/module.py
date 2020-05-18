@@ -15,4 +15,6 @@ class Module(object):
         
     def param(self): return []
     
+    def gradwrtparam(self): return []
+    
     def to_string(self): raise NotImplementedError

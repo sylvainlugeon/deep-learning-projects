@@ -7,6 +7,7 @@ from loss import *
 from linear import *
 from activation import *
 from sequential import *
+from optimizer import *
 
 # just to be sure
 torch.set_grad_enabled(False);
@@ -39,9 +40,14 @@ def accuracy(model, inputs, classes):
     nb_errors = (pred_classes - classes[:,0]).type(torch.BoolTensor).sum().item()
     return (nb_samples - nb_errors) / nb_samples
 
-# method for testing model on 2d radius classification
-def test():
+
+if __name__ == '__main__':
     
+    # Global training parameters
+    EPOCHS = 25
+    BACTH_SIZE = 10
+    LEARNING_RATE = 1e-1
+
     # model creation
     model = Sequential(
         Linear(2, 25), 
@@ -50,7 +56,7 @@ def test():
         Relu(),
         Linear(25, 25), 
         Relu(),
-        Linear(25, 2), loss=MSELoss())
+        Linear(25, 2))
     
     print("Model:")
     print("---------------------")
@@ -61,13 +67,42 @@ def test():
     train_inputs, train_targets, train_classes = generate_points(1000)
     test_inputs, test_targets, test_classes = generate_points(1000)
     
-    # train model
-    model.train(train_inputs, train_targets, epochs=25, batch_size=10, verbose=True)
+    # Loss
+    criterion = MSELoss()
+    
+    # Optimizer
+    optimizer = SGD(model, LEARNING_RATE)
+    
+    for e in range(EPOCHS):
+            
+        sum_loss = 0
+        # iterate over each batch and update weights
+        for input_batch, target_batch in zip(train_inputs.split(BACTH_SIZE), train_targets.split(BACTH_SIZE)):
+
+            # computing predicted values and loss
+            predicted = model.forward(input_batch)
+            loss = criterion.forward(predicted, target_batch)
+            
+            # averaging loss over the current epoch (for consistent logging)
+            sum_loss = sum_loss + (BACTH_SIZE / train_inputs.shape[0]) * loss
+
+            # reinitializing gradients
+            optimizer.zero_grad()
+            
+            # computing derivative of the loss between predicted and target
+            gradwrtoutput = criterion.backward(predicted, target_batch)
+
+            # backpropagate the loss through the net, adding the gradients in linear modules
+            gradwrtinput = model.backward(gradwrtoutput)
+
+            # update weights in linear modules
+            optimizer.step()
+
+      
+        print("Epoch {} | Loss {:.3f}".format(e, sum_loss))
     
     # compute accuracy
     train_acc = accuracy(model, train_inputs, train_classes)
     test_acc = accuracy(model, test_inputs, test_classes)
     
     print("Train accuracy: {} | Test accuracy: {}".format(train_acc, test_acc))
-    
-test()

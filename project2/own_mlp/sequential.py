@@ -20,7 +20,7 @@ class Sequential(Updatable):
                 for layer in module.layers:
                     self.layers.append(layer)
             else:
-                raise NotImplementedError("Invalid layer input")
+                raise NotImplementedError("Invalid layer input") #not the right exception
                 
     def add_layers(self,*modules):
         for module in modules:
@@ -30,7 +30,7 @@ class Sequential(Updatable):
                 for layer in module.layers:
                     self.layers.append(layer)
             else:
-                raise NotImplementedError("Invalid layer input")
+                raise NotImplementedError("Invalid layer input") #not the right exception
     
     def forward(self, input):
         x = input
@@ -43,47 +43,20 @@ class Sequential(Updatable):
         for m in reversed(self.layers): # not backwarding through the loss
             x = m.backward(x)
         return x
-    
-    def update_param(self, step_size):
-        for m in self.layers:
-            if isinstance(m, Updatable):
-                m.update_param(step_size)
-    
-    def train(self, input, target, epochs, batch_size = 10, verbose=True):
-        
-        eta = 1e-1 
-                
-        for e in range(epochs):
-            
-            sum_loss = 0
-            # iterate over each batch and update weights
-            for input_batch, target_batch in zip(input.split(batch_size), target.split(batch_size)):
-                
-                # computing predicted values and loss
-                predicted = self.forward(input_batch) 
-                sum_loss = sum_loss + (batch_size / input.shape[0]) * self.loss.loss(predicted, target_batch)
-                
-                # computing derivative of the loss between predicted and target
-                x = self.loss.dloss(predicted, target_batch)
 
-                # backpropagate the loss through the net, adding the gradients in linear modules
-                self.backward(x)
-            
-                # update weights in linear modules
-                self.update_param(eta)
-                        
-            if verbose:        
-                print("Epoch {} | Loss {:.2f}".format(e, sum_loss))
     
     def param(self):
+        p = []
         for m in self.layers:
-            if isinstance(m, Linear):
-                params = m.param()
-                print("*** ", m.to_string(), " ***")
-                print(params[0])
-                print(params[1])
-                print()
-            
+            p.extend(m.param())
+        return p
+                
+    def gradwrtparam(self):
+        dLdp = []
+        for m in self.layers:
+            dLdp.extend(m.gradwrtparam())
+        return dLdp
+    
     def describe(self):
         print(self.to_string())
         

@@ -41,14 +41,10 @@ class Linear(Cell, Updatable):
         return d_input
     
     def param(self):
-        return self.w, self.b, self.dw, self.db
+        return self.w, self.b 
     
-    # updating the weights wrt to the step size and gradients stored, then set the gradients back to zero
-    def update_param(self, step_size):
-        self.w = self.w - step_size * self.dw
-        self.b = self.b - step_size * self.db
-        self.dw.zero_()
-        self.db.zero_()
+    def gradwrtparam(self):
+        return self.dw, self.db
         
     def to_string(self):
         return "Linear ({}, {})".format(self.in_size, self.out_size)

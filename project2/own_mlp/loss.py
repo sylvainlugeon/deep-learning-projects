@@ -3,14 +3,14 @@ import random
 import math
 from module import *
 
-# Mother class of losses, defines methodes loss() and dloss()
+# Mother class of losses, defines methodes loss() and dloss() 
 class Loss(Module):
     def __init__(self):
         super(Loss, self).__init__()
         
-    def loss(self, input, target): raise NotImplementedError
+    def forward(self, input, target): raise NotImplementedError
         
-    def dloss(self, input, target): raise NotImplementedError
+    def backward(self, input, target): raise NotImplementedError
 
 # MSE Loss
 class MSELoss(Loss):
@@ -18,11 +18,11 @@ class MSELoss(Loss):
         super(MSELoss, self).__init__()
     
     # input: predicted, target
-    def loss(self, input, target):
+    def forward(self, input, target):
         return (input - target).pow(2).sum() / input.shape[0]
     
     # gradwrtoutput : predicted, target
-    def dloss(self, input, target):
+    def backward(self, input, target):
         return 2 * (input - target) / input.shape[0]
     
     def to_string(self): return "MSE Loss"
