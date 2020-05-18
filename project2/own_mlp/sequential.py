@@ -45,8 +45,8 @@ class Sequential(Updatable):
                 
                 # computing predicted values and loss
                 predicted = self.forward(input_batch) 
-                sum_loss = sum_loss + self.loss.loss(predicted, target_batch)
-
+                sum_loss = sum_loss + (batch_size / input.shape[0]) * self.loss.loss(predicted, target_batch)
+                
                 # computing derivative of the loss between predicted and target
                 x = self.loss.dloss(predicted, target_batch)
 
