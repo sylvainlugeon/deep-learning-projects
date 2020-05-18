@@ -2,12 +2,12 @@ import torch
 import random
 import math
 from module import *
+from cell import *
+from updatable import *
 
-# Linear module
-class Linear(Module):
+class Linear(Cell, Updatable):
     def __init__(self, in_size, out_size):
         
-        super(Linear, self).__init__()
         self.in_size = in_size
         self.out_size = out_size
         
@@ -20,27 +20,25 @@ class Linear(Module):
         self.dw = torch.empty(out_size, in_size).zero_()
         self.db = torch.empty(out_size).zero_()
         
-        self.in_value = torch.empty(in_size)
     
-    # only with one input sample
-    def forward(self, *input):
-        self.in_value = input[0]
-        return self.w.mv(input[0]) + self.b
+    def forward(self, input):
+        self.in_value = input
+        return self.w.mm(input.T).T + self.b
     
-    def backward(self, *gradwrtoutput):
+    def backward(self, gradwrtoutput):
         
-        # gradient for that one sample
-        dw_c = gradwrtoutput[0].view(-1, 1).mm(self.in_value.view(1, -1))
-        db_c = gradwrtoutput[0]
+        # gradient for all the samples in the batch
+        dw_c = gradwrtoutput.T.mm(self.in_value)
+        db_c = torch.sum(gradwrtoutput.T, dim=1) # right to use sum ??
         
-        # updating stored gradients
+        # updating gradients
         self.dw.add_(dw_c)
         self.db.add_(db_c)
         
         # gradient with respect to the input
-        d_input = gradwrtoutput[0].view(1, -1).mm(self.w)
+        d_input = gradwrtoutput.mm(self.w)
         
-        return d_input[0]
+        return d_input
     
     def param(self):
         return self.w, self.b, self.dw, self.db
