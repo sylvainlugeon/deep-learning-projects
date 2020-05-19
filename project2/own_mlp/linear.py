@@ -63,4 +63,7 @@ class Linear(Cell, Updatable):
             return self.dw
         
     def to_string(self):
-        return "Linear ({}, {})".format(self.in_size, self.out_size)
+        if self.bias:
+            return "Linear ({}, {})".format(self.in_size, self.out_size) + " with bias"
+        else:
+            return "Linear ({}, {})".format(self.in_size, self.out_size) + " without bias"
