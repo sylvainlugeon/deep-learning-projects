@@ -28,7 +28,7 @@ The   goal   of   this   project   is   to   assess   the   impact   of network 
 
 ## Prerequisite
 
-This code was developped using ```python 3.7.3``` (with its standart libraries), and with ```pytorch 1.4.0```. In addition, for the visualisation, ```numpy 1.16.4``` and ```scipy 1.1.0``` were used.
+This code was developped using ```python 3.7.3``` (with its standart libraries), and with ```pytorch 1.4.0```. In addition, for the visualisation, ```numpy 1.16.4```, ```matplotlib 3.1.3``` and ```scipy 1.1.0``` were used.
 
 
 

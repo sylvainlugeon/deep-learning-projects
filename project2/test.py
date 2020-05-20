@@ -5,7 +5,6 @@ import math
 # Deep learning library developped in the scope of this project.
 from dl_lib import *
 
-
 torch.set_grad_enabled(False);
 
 # set seeds
