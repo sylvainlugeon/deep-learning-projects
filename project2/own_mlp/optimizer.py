@@ -21,7 +21,7 @@ class SGD(Optimizer):
     
     def step(self):
         for p, dLdp in zip(self.model.param(), self.model.gradwrtparam()):
-            p.add_(- self.lr *  dLdp)
+            p.add_(- self.lr * dLdp)
         
     def zero_grad(self):
         for dLdp in self.model.gradwrtparam():

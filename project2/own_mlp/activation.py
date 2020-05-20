@@ -20,13 +20,17 @@ class Sigmoid(Activation):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
+    
+    def sigmoid(x):
+        return 1 / (1 + (-input).exp())
+    
     def forward(self, input):
-        x = 1 / (1 + (-input).exp())
+        x = self.sigmoid(input)
         self.in_value = x
         return x
     
     def derivative(self, v):
-        return self.forward(v) * self.forward(-v) # fancy form for derivative
+        return self.sigmoid(v) * self.sigmoid(-v) 
     
     def to_string(self): return "Sigmoid"
     
@@ -54,12 +58,32 @@ class Tanh(Activation):
     def __init__(self):
         super(Tanh, self).__init__()
     
+    def tanh(x):
+        return (1 - (-2*x).exp() ) / (1 + (-2*x).exp())
+        
     def forward(self, input):
-        x = (1 - (-2*input).exp() ) / (1 + (-2*input).exp())
+        x = self.tanh(input)
         self.in_value = x
         return x
     
     def derivative(self, v):
-        return 1 - self.forward(v)*self.forward(v)
+        return 1 - self.tanh(v)*self.tanh(v)
     
     def to_string(self): return "Tanh"
+    
+class Softmax(Activation):
+    def __init__(self):
+        super(Softmax, self).__init__()
+    
+    def softmax(x):
+        return x.exp()/x.exp().sum(1).unsqueeze(1)
+    
+    def forward(self, input):
+        x = self.softmax(input)
+        self.in_value = x
+        return x
+    
+    def derivative(self, v):
+        return self.softmax(v)*(1 - self.softmax(v))
+    
+    def to_string(self): return "Softmax"

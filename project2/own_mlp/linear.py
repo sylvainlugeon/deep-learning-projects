@@ -21,11 +21,8 @@ class Linear(Cell, Updatable):
         if self.bias:
             self.b = torch.empty(out_size).uniform_(-stdv, stdv)
             self.db = torch.empty(out_size).zero_()
-        elif self.bias==False:
-            self.b = None
-            self.db = None
-        else:
-            raise NotImplementedError("Invalid input for bias")
+        elif self.bias is not False:
+            raise Exception("Invalid input for bias")
         
     
     def forward(self, input):
