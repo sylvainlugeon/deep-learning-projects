@@ -14,9 +14,9 @@ class Sequential(Updatable):
         super(Sequential, self).__init__()
         self.layers = []
         for module in modules:
-            if isinstance(module,Cell):
+            if isinstance(module, Cell):
                 self.layers.append(module)
-            elif isinstance(module,Sequential):
+            elif isinstance(module, Sequential):
                 for layer in module.layers:
                     self.layers.append(layer)
             else:
@@ -34,13 +34,13 @@ class Sequential(Updatable):
     
     def forward(self, input):
         x = input
-        for m in self.layers: # not forwarding through the loss
+        for m in self.layers: 
             x = m.forward(x)
         return x
     
     def backward(self, gradwrtoutput):
         x = gradwrtoutput
-        for m in reversed(self.layers): # not backwarding through the loss
+        for m in reversed(self.layers): 
             x = m.backward(x)
         return x
 
