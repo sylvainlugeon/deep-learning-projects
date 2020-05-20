@@ -73,6 +73,7 @@ class Sequential(Module):
         s = ''
         for m in self.layers:
             s = s + m.to_string() + '\n'
+        s = s.rstrip('\n')
         return s
 
     def training_mode(self, train):

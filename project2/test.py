@@ -1,11 +1,17 @@
 import torch
 import random
 import math
+import time
 
 # Deep learning library developped in the scope of this project.
 from dl_lib import *
 
 torch.set_grad_enabled(False);
+
+# Global training parameters
+EPOCHS = 25
+BACTH_SIZE = 10
+LEARNING_RATE = 1e-1
 
 # set seeds
 SEED = 1
@@ -33,19 +39,20 @@ def generate_points(nb):
 def accuracy(model, inputs, classes):
     """Compute the accuray of the <model> prediction on the dataset <input>, given the corresponding true <classes>."""
     nb_samples = inputs.shape[0]
-    pred = model.predict(inputs)
+    
+    if isinstance(model, Sequential):
+        pred = model.predict(inputs)
+    else:
+        pred = model(inputs)
+        
     _, pred_classes = pred.max(1)
     nb_errors = (pred_classes - classes).type(torch.BoolTensor).sum().item()
     return (nb_samples - nb_errors) / nb_samples
 
 
-if __name__ == '__main__':
-    
-    # Global training parameters
-    EPOCHS = 25
-    BACTH_SIZE = 10
-    LEARNING_RATE = 1e-1
 
+def test():
+    """Test of the deep learning library following the instructions given in the miniproject proposal."""
     # model creation
     model = Sequential(
         Linear(2, 25), 
@@ -61,9 +68,12 @@ if __name__ == '__main__':
     model.describe()
     print("---------------------")
     
-    # generating points
-    train_inputs, train_targets, train_classes = generate_points(1000)
-    test_inputs, test_targets, test_classes = generate_points(1000)
+    # Generating points
+    train_dataset = generate_points(1000)
+    test_dataset = generate_points(1000)
+    
+    train_inputs, train_targets, train_classes = train_dataset
+    test_inputs, test_targets, test_classes = test_dataset
     
     # Loss
     criterion = MSELoss()
@@ -72,36 +82,50 @@ if __name__ == '__main__':
     optimizer = SGD(model, LEARNING_RATE)
     
     model.training_mode(True)
+    
+    print("Training:")
+    t0 = time.time()
     for e in range(EPOCHS):
             
         sum_loss = 0
-        # iterate over each batch and update weights (replace train_targets with train_classes when using CrossEntropyLoss)
+        # Iterate over each batch and update weights (replace train_targets with train_classes when using CrossEntropyLoss)
         for input_batch, target_batch in zip(train_inputs.split(BACTH_SIZE), train_targets.split(BACTH_SIZE)):
             
-            # computing predicted values and loss
+            # Computing predicted values and loss
             predicted = model.forward(input_batch)
             loss = criterion.forward(predicted, target_batch)
             
-            # averaging loss over the current epoch (for consistent logging independetly of BATCH_SIZE)
+            # Averaging loss over the current epoch (for consistent logging independetly of BATCH_SIZE)
             sum_loss = sum_loss + (BACTH_SIZE / train_inputs.shape[0]) * loss
 
-            # reinitializing gradients
+            # Reinitializing gradients
             optimizer.zero_grad()
             
-            # computing derivative of the loss between predicted and target
+            # Computing derivative of the loss between predicted and target
             gradwrtoutput = criterion.backward(predicted, target_batch)
 
-            # backpropagate the loss through the net, adding the gradients in linear modules
+            # Backpropagate the loss through the net, adding the gradients in linear modules
             gradwrtinput = model.backward(gradwrtoutput)
 
-            # update weights in linear modules
+            # Update weights in linear modules
             optimizer.step()
 
       
-        print("Epoch {} | Loss {:.3f}".format(e, sum_loss))
+        print("Epoch {} | Loss {:.3f}".format(e+1, sum_loss))
     
-    # compute accuracy
+    # Stop time
+    t1 = time.time()
+    dt = t1 - t0
+    
+    # Compute accuracy
     train_acc = accuracy(model, train_inputs, train_classes)
     test_acc = accuracy(model, test_inputs, test_classes)
     
+    print("---------------------")
     print("Train accuracy: {} | Test accuracy: {}".format(train_acc, test_acc))
+    print("Time elapsed; {:.3}s".format(dt))
+    
+    return model, train_dataset, test_dataset
+    
+if __name__ == '__main__':
+    test()
