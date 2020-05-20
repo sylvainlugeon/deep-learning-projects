@@ -20,9 +20,9 @@ class Sigmoid(Activation):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
-    
+    @staticmethod
     def sigmoid(x):
-        return 1 / (1 + (-input).exp())
+        return 1 / (1 + (-x).exp())
     
     def forward(self, input):
         x = self.sigmoid(input)
@@ -39,9 +39,14 @@ class Relu(Activation):
     def __init__(self):
         super(Relu, self).__init__()
 
-    def forward(self, input):
-        x = input.clone()
+    @staticmethod
+    def relu(x):
+        x = x.clone()
         x[x < 0] = 0
+        return x
+    
+    def forward(self, input):
+        x = self.relu(input)
         self.in_value = x
         return x
     
@@ -58,6 +63,7 @@ class Tanh(Activation):
     def __init__(self):
         super(Tanh, self).__init__()
     
+    @staticmethod
     def tanh(x):
         return (1 - (-2*x).exp() ) / (1 + (-2*x).exp())
         
@@ -75,6 +81,7 @@ class Softmax(Activation):
     def __init__(self):
         super(Softmax, self).__init__()
     
+    @staticmethod
     def softmax(x):
         return x.exp()/x.exp().sum(1).unsqueeze(1)
     

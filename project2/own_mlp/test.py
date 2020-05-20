@@ -13,15 +13,16 @@ from optimizer import *
 torch.set_grad_enabled(False);
 
 # set seeds
-torch.manual_seed(42)
-random.seed(42)
+SEED = 1
+torch.manual_seed(SEED)
+random.seed(SEED)
 
 # generate 2d points in [0,1] squared, targets are 0 if point inside the circle of squared radius 1/2pi and 1 outside.
 # return coordinates and target tensors, both of size Nx2, plus classes tensor of size Nx1
 def generate_points(nb):
     inputs = torch.empty((nb, 2))
     targets = torch.empty((nb, 2))
-    classes = torch.empty((nb, 1))
+    classes = torch.empty((nb), dtype=torch.long)
     for i in range(nb):
         x = random.uniform(0,1) - 0.5
         y = random.uniform(0,1) - 0.5
@@ -37,7 +38,7 @@ def accuracy(model, inputs, classes):
     nb_samples = inputs.shape[0]
     pred = model.predict(inputs)
     _, pred_classes = pred.max(1)
-    nb_errors = (pred_classes - classes[:,0]).type(torch.BoolTensor).sum().item()
+    nb_errors = (pred_classes - classes).type(torch.BoolTensor).sum().item()
     return (nb_samples - nb_errors) / nb_samples
 
 
@@ -78,12 +79,12 @@ if __name__ == '__main__':
         sum_loss = 0
         # iterate over each batch and update weights
         for input_batch, target_batch in zip(train_inputs.split(BACTH_SIZE), train_targets.split(BACTH_SIZE)):
-
+            
             # computing predicted values and loss
             predicted = model.forward(input_batch)
             loss = criterion.forward(predicted, target_batch)
             
-            # averaging loss over the current epoch (for consistent logging)
+            # averaging loss over the current epoch (for consistent logging independetly of BATCH_SIZE)
             sum_loss = sum_loss + (BACTH_SIZE / train_inputs.shape[0]) * loss
 
             # reinitializing gradients

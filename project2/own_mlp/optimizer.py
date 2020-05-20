@@ -40,16 +40,16 @@ class Adam(Optimizer):
     def step(self):
         i = 0
         for p, dLdp in zip(self.model.param(), self.model.gradwrtparam()):
-            if len(self.mt)<i+1 and len(self.vt)<i+1:
-                self.mt.append(torch.mul(dLdp,1-self.betas[0]))
-                self.vt.append(torch.mul(dLdp*dLdp,1-self.betas[1]))
+            if len(self.mt) < i + 1 and len(self.vt) < i + 1:
+                self.mt.append(torch.mul(dLdp, 1 - self.betas[0]))
+                self.vt.append(torch.mul(dLdp * dLdp, 1 - self.betas[1]))
             else:
-                self.mt[i] = torch.mul(self.mt[i],self.betas[0]) + torch.mul(dLdp,1-self.betas[0])
-                self.vt[i] = torch.mul(self.vt[i],self.betas[1]) + torch.mul(dLdp*dLdp,1-self.betas[1])
-            mt_hat = torch.mul(self.mt[i],1/(1-self.betas[0]))
-            vt_hat = torch.mul(self.vt[i],1/(1-self.betas[1]))
-            p.add_(torch.mul(mt_hat,-self.lr/(vt_hat.sqrt() + self.eps)))
-            i = i+1
+                self.mt[i] = torch.mul(self.mt[i],self.betas[0]) + torch.mul(dLdp, 1 - self.betas[0])
+                self.vt[i] = torch.mul(self.vt[i],self.betas[1]) + torch.mul(dLdp * dLdp, 1 - self.betas[1])
+            mt_hat = torch.mul(self.mt[i], 1 / (1 - self.betas[0]))
+            vt_hat = torch.mul(self.vt[i], 1 / (1 - self.betas[1]))
+            p.add_(torch.mul(mt_hat, -self.lr / (vt_hat.sqrt() + self.eps)))
+            i = i + 1
     def zero_grad(self):
         for dLdp in self.model.gradwrtparam():
             dLdp.zero_()
