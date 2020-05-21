@@ -1,10 +1,9 @@
 import torch
 import random
 import math
-from .module import *
 from .cell import *
 
-class Linear(Cell, Module):
+class Linear(Cell):
     """Linear layer module."""
     
     def __init__(self, in_size, out_size, bias=True):

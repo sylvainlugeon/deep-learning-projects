@@ -12,9 +12,8 @@ torch.set_grad_enabled(False);
 EPOCHS = 25
 BACTH_SIZE = 10
 LEARNING_RATE = 1e-1
-
-# set seeds
 SEED = 1
+
 torch.manual_seed(SEED)
 random.seed(SEED)
 
@@ -51,8 +50,9 @@ def accuracy(model, inputs, classes):
 
 
 
-def test():
+def test(verbose=True):
     """Test of the deep learning library following the instructions given in the miniproject proposal."""
+    
     # model creation
     model = Sequential(
         Linear(2, 25), 
@@ -63,10 +63,11 @@ def test():
         Relu(),
         Linear(25, 2))
     
-    print("Model:")
-    print("---------------------")
-    model.describe()
-    print("---------------------")
+    if verbose:
+        print("Model:")
+        print("---------------------")
+        model.describe()
+        print("---------------------")
     
     # Generating points
     train_dataset = generate_points(1000)
@@ -83,7 +84,9 @@ def test():
     
     model.training_mode(True)
     
-    print("Training:")
+    if verbose:
+        print("Training:")
+        
     t0 = time.time()
     for e in range(EPOCHS):
             
@@ -110,8 +113,8 @@ def test():
             # Update weights in linear modules
             optimizer.step()
 
-      
-        print("Epoch {} | Loss {:.3f}".format(e+1, sum_loss))
+        if verbose:
+            print("Epoch {} | Loss {:.3f}".format(e+1, sum_loss))
     
     # Stop time
     t1 = time.time()
@@ -121,11 +124,12 @@ def test():
     train_acc = accuracy(model, train_inputs, train_classes)
     test_acc = accuracy(model, test_inputs, test_classes)
     
-    print("---------------------")
-    print("Train accuracy: {} | Test accuracy: {}".format(train_acc, test_acc))
-    print("Time elapsed; {:.3}s".format(dt))
+    if verbose:
+        print("---------------------")
+        print("Train accuracy: {} | Test accuracy: {}".format(train_acc, test_acc))
+        print("Time elapsed; {:.3}s".format(dt))
     
-    return model, train_dataset, test_dataset
+    return model, train_dataset, test_dataset, train_acc, test_acc,  dt
     
 if __name__ == '__main__':
     test()
